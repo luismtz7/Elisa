@@ -1,0 +1,9 @@
+# dependencies used in the production environment.
+# pip freeze = to see de dependencies in the environment
+# pip install -r requirements.txt = to install the dependencies in the environment
+asgiref==3.8.1
+Django==5.1.5
+psycopg2==2.9.10
+python-decouple==3.8
+sqlparse==0.5.3
+tzdata==2025.1
