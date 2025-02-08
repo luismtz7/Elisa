@@ -1,14 +1,11 @@
-import psycopg2
+from jwcrypto import jwk
 
-try:
-    conn = psycopg2.connect(
-        dbname="elisa_db_dev",
-        user="luismartinez",
-        password="lm17052019",
-        host="localhost",
-        port="5432"
-    )
-    print("Conexión exitosa!")
-    conn.close()
-except Exception as e:
-    print(f"Error: {e}")
+key = jwk.JWK.generate(kty='RSA', size=2048)
+private_key = key.export_private()
+public_key = key.export_public()
+
+print("PRIVATE KEY:")
+print(private_key)
+
+print("\nPUBLIC KEY:")
+print(public_key)

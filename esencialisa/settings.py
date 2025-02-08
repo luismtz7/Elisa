@@ -43,6 +43,10 @@ INSTALLED_APPS = [
     'corsheaders',
     'users',
     'manicurists',
+    'clients',
+    'works',
+    'appointments',
+    'notifications',
 ]
 
 MIDDLEWARE = [
@@ -134,5 +138,18 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True  # Permite cookies cross-origin
 
 AUTH_USER_MODEL = 'users.User'
+
+JWT_PRIVATE_KEY = config("JWT_PRIVATE_KEY").replace("\\n", "\n")
+JWT_PUBLIC_KEY = config("JWT_PUBLIC_KEY").replace("\\n", "\n")
+
+
+# Permitir Cookies Seguras
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SECURE = True  # Solo si usas HTTPS
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SECURE = True
+
+MIDDLEWARE.insert(0, "corsheaders.middleware.CorsMiddleware")
