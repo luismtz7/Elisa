@@ -27,6 +27,7 @@ const HomePage = () => (
         <ul>
           <li><Link to="/">Inicio</Link></li>
           <li><Link to="/galeria">Galeria</Link></li>
+          <li><Link to="/servicios">Servicios</Link></li>
           <li><Link to="/agendar-cita">Agendar Cita</Link></li>
           <li><Link to="/login">Iniciar Sesión</Link></li>
           <li><Link to="/register">Registrarse</Link></li>
