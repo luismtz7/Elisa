@@ -144,9 +144,12 @@
 .fi button {
     background-color: transparent;
     padding: 0;
+    border-color: transparent;
+    cursor: pointer;
 }
 
 .fi button:hover {
     border-color: transparent;
+
 }
 

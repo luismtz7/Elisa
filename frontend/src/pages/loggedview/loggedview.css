@@ -98,16 +98,33 @@ a:hover{
 
 /* Estilos del menú desplegable */
 .userMenu {
-  width: 70px;
+  width: 80px;
+  background-color: #f2d0f2;
   z-index: 10;
   position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.userMenu p {
+  font-size: 20px;
+  margin: 0;
 }
 
 .item{
   margin: 5px 0;
 }
 
+.item button{
+  cursor: pointer;
+}
 
+.divisionBar {
+  background-color: #7DD0D2;
+  width: 80%;
+  height: 2px;
+  border-radius: 10px;
+}

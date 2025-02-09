@@ -1,7 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import React, { useState, useEffect, useRef, useContext } from "react";
+import { BrowserRouter as Router, Route, Routes, Link, useNavigate } from "react-router-dom";
 import elisaLogo from "../../assets/logowebelisa.svg";
 import "./loggedview.css";
+import { AuthContext } from '../../authContext/authContext';
+import { jwtDecode } from 'jwt-decode';
+
 
 export const LoggedView = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -20,6 +23,19 @@ export const LoggedView = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const { logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/'); // Redirige al usuario a la página de inicio de sesión después de cerrar sesión
+  };
+
+  const accessToken = localStorage.getItem('access_token');
+  const decodedToken = jwtDecode(accessToken);
+  const userRole = decodedToken.rol;
+  const userName = decodedToken.username;
 
   return (
     <>
@@ -64,6 +80,10 @@ export const LoggedView = () => {
             {menuOpen && (
               <article className="userMenu">
 
+                <p>
+                  {userName}
+                </p>
+
                 <article className="item">
                   <Link
                     to="/perfil"
@@ -84,12 +104,19 @@ export const LoggedView = () => {
                   </Link>
                 </article>
 
+                {
+                  userRole === 'manicurista' && (
+                    <article className="item">
+                        <button>
+                          Subir imagen
+                        </button>
+                    </article>
+                  )
+                }
+
                 <article className="item">
                   <button
-                    onClick={() => {
-                      setMenuOpen(false);
-                      console.log("Cerrar sesión");
-                    }}
+                    onClick={handleLogout}
                   >
                     Cerrar Sesión
                   </button>
@@ -98,7 +125,12 @@ export const LoggedView = () => {
             )}
           </article>
         </nav>
+        <article className="divisionBar">
+        </article>
       </header>
+      <main>
+
+      </main>
     </>
   );
 };
