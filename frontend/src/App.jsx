@@ -5,6 +5,7 @@ import elisaLogo from './assets/logowebelisa.svg';
 import './App.css';
 import { Login } from './pages/loginview/login';
 import { Register } from './pages/registerview/register';
+import { LoggedView } from './pages/loggedview/loggedview'; 
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/home" element={<LoggedView />} />
       </Routes>
     </Router>
   );

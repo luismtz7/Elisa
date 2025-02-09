@@ -30,7 +30,7 @@ export const Login = () => {
             localStorage.setItem('access_token', response.access_token);
             localStorage.setItem('refresh_token', response.refresh_token);
             alert('Inicio de sesión exitoso');
-            navigate('/'); // Redirige al usuario a la página principal después del login
+            navigate('/Home'); // Redirige al usuario a la página principal después del login
         } catch (error) {
             alert(error.error || 'Error al iniciar sesión');
         }
