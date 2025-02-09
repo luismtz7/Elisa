@@ -1,20 +1,25 @@
 // App.js
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
 import elisaLogo from './assets/logowebelisa.svg';
 import './App.css';
 import { Login } from './pages/loginview/login';
 import { Register } from './pages/registerview/register';
 import { LoggedView } from './pages/loggedview/loggedview'; 
+import { PrivateRoute } from './PrivateRoute';
+
 
 function App() {
+  const isAuthenticated = !!localStorage.getItem('access_token'); // Verifica si hay un token de acceso
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={isAuthenticated ? <Navigate to="/home" /> : <HomePage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/home" element={<LoggedView />} />
+        <Route element={<PrivateRoute />} >
+          <Route path="/home" element={<LoggedView />} />
+        </Route>
       </Routes>
     </Router>
   );

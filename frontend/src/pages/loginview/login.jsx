@@ -1,8 +1,9 @@
 // src/components/Login.jsx
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../api';
-import  GoogleLoginButton from '..//GoogleLoginButton'; // Importa el botón de Google
+//import  GoogleLoginButton from '..//GoogleLoginButton'; // Importa el botón de Google
 import './login.css';
 
 export const Login = () => {
@@ -13,7 +14,7 @@ export const Login = () => {
     });
 
     const handleBackClick = () => {
-        navigate(-1); // Go back
+        navigate('/'); // Go back
     };
 
     const handleChange = (e) => {
@@ -30,7 +31,7 @@ export const Login = () => {
             localStorage.setItem('access_token', response.access_token);
             localStorage.setItem('refresh_token', response.refresh_token);
             alert('Inicio de sesión exitoso');
-            navigate('/Home'); // Redirige al usuario a la página principal después del login
+            navigate('/home'); // Redirige al usuario a la página principal después del login
         } catch (error) {
             alert(error.error || 'Error al iniciar sesión');
         }
@@ -89,12 +90,15 @@ export const Login = () => {
 
                     <button type="submit" className="button-submit">Iniciar sesión</button>
 
-                    <p className="p">¿No tienes una cuenta? <span className="span">Registrate</span></p>
+                    <p className="p">¿No tienes una cuenta? <Link to="/register"><span className="span"> Registrate</span></Link></p>
+                    {/* 
                     <p className="p line">Resgistrarse con</p>
 
+                    
                     <article className="flex-row">
-                        <GoogleLoginButton />  {/* Botón de Google */}
+                        <GoogleLoginButton /> 
                     </article>
+                    */}
                 </form>
             </section>
         </>

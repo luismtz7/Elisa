@@ -1,6 +1,8 @@
 // src/components/Register.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
+
 import { registerUser } from '../../api';
 import './register.css';
 
@@ -24,18 +26,19 @@ export const Register = () => {
         try {
             const response = await registerUser(formData);
             alert(response.message);
+            navigate('/login');
         } catch (error) {
             alert(error.error || 'Error al registrar el usuario');
         }
     };
 
     const handleBackClick = () => {
-        navigate(-1); // Go back
+        navigate('/'); // Go back
     };
+
 
     return (
         <>
-
             <article className='fi' onClick={handleBackClick}>
                 <button onClick={handleBackClick}><i className="fi fi-rr-arrow-small-left"></i></button>
             </article>
@@ -107,6 +110,9 @@ export const Register = () => {
 
                     <button type="submit" className="button-submit">Registrarse</button>
 
+                    <p className="p">¿Ya tienes una cuenta? <Link to="/login"><span className="span"> Inicia sesión</span></Link></p>
+
+                    {/*}
                     <p className="p line">Continuar con</p>
 
                     <article className="flex-row">
@@ -128,6 +134,7 @@ export const Register = () => {
                             Google 
                         </button>
                     </article>
+                    */}
                 </form>
             </section>
         </>
