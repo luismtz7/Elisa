@@ -1,5 +1,4 @@
 // App.js
-import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
 import elisaLogo from './assets/logowebelisa.svg';
 import './App.css';

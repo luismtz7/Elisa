@@ -4,9 +4,26 @@ import elisaLogo from "../../assets/logowebelisa.svg";
 import "./loggedview.css";
 import { AuthContext } from '../../authContext/authContext';
 import { jwtDecode } from 'jwt-decode';
+import "./modal.css"
+import { UploadWorkImage } from "./uploadworkimage";
+import { ImageGallery } from "../galleryview/imagegallery";
+import axios from 'axios';
 
+const Modal = ({ isOpen, onClose, children }) => {
+  if (!isOpen) return null;
+
+  return (
+    <section className="modal-overlay">
+      <article className="modal-content">
+        <button onClick={onClose}>Cerrar</button>
+        {children}
+      </article>
+    </section>
+  );
+};
 
 export const LoggedView = () => {
+  const [isModalOpen, setModalOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -36,6 +53,26 @@ export const LoggedView = () => {
   const decodedToken = jwtDecode(accessToken);
   const userRole = decodedToken.rol;
   const userName = decodedToken.username;
+
+  const [images, setImages] = useState([]);
+
+  // Cargar imágenes al iniciar la aplicación
+  useEffect(() => {
+      const fetchImages = async () => {
+          try {
+              const response = await axios.get('http://127.0.0.1:8000/api/Works/');
+              setImages(response.data);
+          } catch (error) {
+              console.error('Error al cargar las imágenes:', error);
+          }
+      };
+
+      fetchImages();
+  }, []);
+
+  const handleImageUpload = (newImage) => {
+      setImages([...images, newImage]);
+  };
 
   return (
     <>
@@ -107,7 +144,7 @@ export const LoggedView = () => {
                 {
                   userRole === 'manicurista' && (
                     <article className="item">
-                        <button>
+                        <button onClick={() => setModalOpen(true)}>
                           Subir imagen
                         </button>
                     </article>
@@ -128,7 +165,18 @@ export const LoggedView = () => {
         <article className="divisionBar">
         </article>
       </header>
+
       <main>
+        <article>
+
+          <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
+            <h2>Subir imagenes</h2>
+            <UploadWorkImage onImageUpload={handleImageUpload}/>
+          </Modal>
+        </article>
+
+      
+        <ImageGallery images={images} />
 
       </main>
     </>
