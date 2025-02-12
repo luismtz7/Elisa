@@ -5,8 +5,28 @@ import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../api';
 //import  GoogleLoginButton from '..//GoogleLoginButton'; // Importa el botón de Google
 import './login.css';
+import { Register } from '../registerview/register';
+
+
+import '../loggedview/modal.css';
+
+const Modal = ({ isOpen, onClose, children }) => {
+    if (!isOpen) return null;
+  
+    return (
+      <section className="modal-overlay">
+        <article className="modal-content">
+          <button onClick={onClose}>Cerrar</button>
+          {children}
+        </article>
+      </section>
+    );
+  };
 
 export const Login = () => {
+    
+  const [isRegisterModalOpen, setRegisterModalOpen] = useState(false);
+
     const navigate = useNavigate();
     const [credentials, setCredentials] = useState({
         username: '',
@@ -39,9 +59,6 @@ export const Login = () => {
 
     return (
         <>  
-            <article className='fi' onClick={handleBackClick}>
-                <button onClick={handleBackClick}><i className="fi fi-rr-arrow-small-left"></i></button>
-            </article>
             <section className='loginbody'>
                 <form className="form" onSubmit={handleSubmit}>
                     <article className="flex-column">
@@ -90,7 +107,10 @@ export const Login = () => {
 
                     <button type="submit" className="button-submit">Iniciar sesión</button>
 
-                    <p className="p">¿No tienes una cuenta? <Link to="/register"><span className="span"> Registrate</span></Link></p>
+                    <p className="p">
+                    ¿No tienes una cuenta? 
+                    <span className="span" onClick={() => setRegisterModalOpen(true)}> Regístrate</span>
+                    </p>
                     {/* 
                     <p className="p line">Resgistrarse con</p>
 
@@ -101,6 +121,12 @@ export const Login = () => {
                     */}
                 </form>
             </section>
+
+            <article>
+                <Modal isOpen={isRegisterModalOpen} onClose={() => setRegisterModalOpen(false)}>
+                <Register />
+                </Modal>
+            </article>
         </>
     );
 };

@@ -39,9 +39,6 @@ export const Register = () => {
 
     return (
         <>
-            <article className='fi' onClick={handleBackClick}>
-                <button onClick={handleBackClick}><i className="fi fi-rr-arrow-small-left"></i></button>
-            </article>
             <section className='registerbody'>
                 <form className='form' onSubmit={handleSubmit}>
 
