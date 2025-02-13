@@ -1,16 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Libre+Baskerville&display=swap');
 
 
-.registerbody{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f5f5f5;
-    margin: 0;
-    padding: 0;
-    place-self: center;
-}
-
 
 .form {
     display: flex;

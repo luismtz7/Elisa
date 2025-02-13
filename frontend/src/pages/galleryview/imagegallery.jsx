@@ -2,7 +2,7 @@ import React from 'react';
 
 const ImageGallery = ({ images }) => {
     return (
-        <div>
+        <article>
             {images.map((image) => (
                 <article key={image.id} style={{ margin: '20px', border: '1px solid #ccc', padding: '10px' }}>
                     <img
@@ -14,7 +14,7 @@ const ImageGallery = ({ images }) => {
                     <small>Subido el: {new Date(image.fecha_subida).toLocaleDateString()}</small>
                 </article>
             ))}
-        </div>
+        </article>
     );
 };
 

@@ -10,29 +10,17 @@ import { useState } from 'react'; // Add this import
 
 import '../src/pages/loggedview/modal.css';
 
-const Modal = ({ isOpen, onClose, children }) => {
-  if (!isOpen) return null;
-
-  return (
-    <section className="modal-overlay">
-      <article className="modal-content">
-        <button onClick={onClose}>Cerrar</button>
-        {children}
-      </article>
-    </section>
-  );
-};
-
 function App() {
-  // Logica para abrir una ventana e iniciar sesión
 
   const isAuthenticated = !!localStorage.getItem('access_token'); // Verifica si hay un token de acceso
   return (
     <Router>
       <Routes>
         <Route path="/" element={isAuthenticated ? <Navigate to="/home" /> : <HomePage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        {/*
+        <Route element={<Login />} />
+        <Route element={<Register />} />
+        */}
         <Route element={<PrivateRoute />} >
           <Route path="/home" element={<LoggedView />} />
         </Route>
@@ -42,8 +30,20 @@ function App() {
 }
 
 const HomePage = () => {
-  const [isLoginModalOpen, setLoginModalOpen] = useState(false);
-  const [isRegisterModalOpen, setRegisterModalOpen] = useState(false);
+    // Logica para abrir una ventana e iniciar sesión
+    const [activeModal, setActiveModal] = useState(null); // null, "first", o "second"
+
+    const openFirstModal = () => {
+      setActiveModal("login"); // Abre la primera modal
+    };
+  
+    const openSecondModal = () => {
+      setActiveModal("register"); // Abre la segunda modal
+    };
+  
+    const closeModal = () => {
+      setActiveModal(null); // Cierra todas las modales
+    };
 
   return (
     <>
@@ -56,19 +56,21 @@ const HomePage = () => {
             <li><Link to="/galeria">Galeria</Link></li>
             <li><Link to="/servicios">Servicios</Link></li>
             <li><Link to="/agendar-cita">Agendar Cita</Link></li>
-            <li onClick={() => setLoginModalOpen(true)}>Iniciar Sesión</li>
-            <li onClick={() => setRegisterModalOpen(true)}>Registrarse</li>
+            <li onClick={openFirstModal}>Iniciar Sesión</li>
+            <li onClick={openSecondModal}>Registrarse</li>
           </ul>
         </nav>
       </header>
 
       <article>
-        <Modal isOpen={isLoginModalOpen} onClose={() => setLoginModalOpen(false)}>
-          <Login />
-        </Modal>
-        <Modal isOpen={isRegisterModalOpen} onClose={() => setRegisterModalOpen(false)}>
-          <Register />
-        </Modal>
+        <Login
+        isOpen={activeModal === "login"}
+        onClose={closeModal}
+        onOpenSecondModal={openSecondModal} />
+        <Register 
+        isOpen={activeModal === "register"}
+        onClose={closeModal}
+        onOpenFirstModal={openFirstModal}/>
       </article>
     </>
   );
