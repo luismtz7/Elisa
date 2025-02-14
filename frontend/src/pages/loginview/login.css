@@ -1,19 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Libre+Baskerville&display=swap');
 
 
-.loginbody{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100vw;
-    background-color: #f5f5f5;
-    margin: 0;
-    padding: 0;
-    place-self: center;
-}
-
-
 .form {
     display: flex;
     flex-direction: column;
@@ -144,8 +131,12 @@
 .fi button {
     background-color: transparent;
     padding: 0;
+    border-color: transparent;
+    cursor: pointer;
 }
 
 .fi button:hover {
     border-color: transparent;
+
 }
+

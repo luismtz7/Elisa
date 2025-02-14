@@ -41,6 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google', 
     'users',
     'manicurists',
     'clients',
@@ -48,6 +53,8 @@ INSTALLED_APPS = [
     'appointments',
     'notifications',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -58,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'esencialisa.urls'
@@ -140,6 +148,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True  # Permite cookies cross-origin
 
+
 AUTH_USER_MODEL = 'users.User'
 
 JWT_PRIVATE_KEY = config("JWT_PRIVATE_KEY").replace("\\n", "\n")
@@ -152,4 +161,5 @@ SESSION_COOKIE_SECURE = True  # Solo si usas HTTPS
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SECURE = True
 
-MIDDLEWARE.insert(0, "corsheaders.middleware.CorsMiddleware")
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
