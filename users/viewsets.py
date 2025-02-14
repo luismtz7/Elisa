@@ -30,7 +30,7 @@ class UserViewSet(viewsets.GenericViewSet):
         # Autenticar al usuario
         user = authenticate(username=username, password=password)
         if user:
-            # Crear tokens de acceso y refresco
+            # Crear tokens de acceso y refresch
             access_token, refresh_token = JWTManager.create_tokens(user)
             return Response({"access_token": access_token, "refresh_token": refresh_token})
         return Response({"error": "Credenciales inválidas"}, status=status.HTTP_401_UNAUTHORIZED)
@@ -42,9 +42,6 @@ class UserViewSet(viewsets.GenericViewSet):
         if not refresh_token:
             return Response({"error": "Refresh token no proporcionado"}, status=status.HTTP_400_BAD_REQUEST)
         
-        # Aquí deberías agregar la lógica para validar y refrescar el token
-        # Por ejemplo, decodificar el refresh token y generar un nuevo access token
-        # Esto es solo un ejemplo y debe ser implementado según tus necesidades
         try:
             # Decodificar el refresh token
             decoded_refresh_token = jwt.JWT(key=JWTManager.public_key, jwt=refresh_token)

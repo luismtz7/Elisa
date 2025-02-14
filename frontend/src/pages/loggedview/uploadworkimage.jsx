@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const UploadWorkImage = ({ onImageUpload }) => {
     const [file, setFile] = useState(null);
-    const [manicuristaId, setManicuristaId] = useState(3); // Cambia esto según la maicurista, pendiente de cambiar para proximo desarrollo 
+    const [manicuristaId, setManicuristaId] = useState(7); // Cambia esto según la maicurista, pendiente de cambiar para proximo desarrollo 
     const [descripcion, setDescripcion] = useState('');
 
     const handleSubmit = async (e) => {

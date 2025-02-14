@@ -50,9 +50,18 @@ export const LoggedView = () => {
   };
 
   const accessToken = localStorage.getItem('access_token');
-  const decodedToken = jwtDecode(accessToken);
-  const userRole = decodedToken.rol;
-  const userName = decodedToken.username;
+  let decodedToken = null;
+  let userRole = '';
+  let userName = decodedToken && decodedToken.username ? decodedToken.username : '';
+
+  try {
+    decodedToken = jwtDecode(accessToken);
+    userRole = decodedToken.rol || '';
+    userName = decodedToken.username;
+  } catch (error) {
+    console.error('Error decoding token:', error);
+    // Handle the error, e.g., redirect to login or show a message
+  }
 
   const [images, setImages] = useState([]);
 

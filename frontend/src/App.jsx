@@ -6,7 +6,9 @@ import { Login } from './pages/loginview/login';
 import { Register } from './pages/registerview/register';
 import { LoggedView } from './pages/loggedview/loggedview'; 
 import { PrivateRoute } from './PrivateRoute';
-import { useState } from 'react'; // Add this import
+import { useState, useEffect } from 'react'; // Add this import
+import axios from 'axios'; // Add this import
+import { ImageGallery } from './pages/galleryview/imagegallery'; // Add this import
 
 import '../src/pages/loggedview/modal.css';
 
@@ -30,6 +32,22 @@ function App() {
 }
 
 const HomePage = () => {
+      // Cargar imágenes al iniciar la aplicación
+    useEffect(() => {
+      const fetchImages = async () => {
+          try {
+              const response = await axios.get('http://127.0.0.1:8000/api/Works/');
+              setImages(response.data);
+          } catch (error) {
+              console.error('Error al cargar las imágenes:', error);
+          }
+      };
+        fetchImages();
+    }, []);
+
+  const [images, setImages] = useState([]);
+
+
     // Logica para abrir una ventana e iniciar sesión
     const [activeModal, setActiveModal] = useState(null); // null, "first", o "second"
 
@@ -72,6 +90,8 @@ const HomePage = () => {
         onClose={closeModal}
         onOpenFirstModal={openFirstModal}/>
       </article>
+
+      <ImageGallery images={images} />
     </>
   );
 };
