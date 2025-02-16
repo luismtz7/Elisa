@@ -9,6 +9,7 @@ import { PrivateRoute } from './PrivateRoute';
 import { useState, useEffect } from 'react'; 
 import axios from 'axios';
 import { Gallery } from './pages/galleryview/gallery';
+import { Calendar } from './pages/calendarview/calendar';
 
 import '../src/pages/loggedview/modal.css';
 
@@ -20,6 +21,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage isAuthenticated={isAuthenticated} />}>
           <Route path='/gallery' element={<Gallery />}/>
+          <Route path='/agendar-cita' element={<Calendar />}/>
         </Route>
         <Route element={<PrivateRoute />} >
           <Route path="/home" element={<LoggedView />} />

@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { BrowserRouter as Router, Route, Routes, Link, useNavigate } from "react-router-dom";
-import elisaLogo from "../../assets/logowebelisa.svg";
 import "./loggedview.css";
 import { AuthContext } from '../../authContext/authContext';
 import { jwtDecode } from 'jwt-decode';
 import "./modal.css"
 import { UploadWorkImage } from "./uploadworkimage";
-import { ImageGallery } from "../galleryview/imagegallery";
 import axios from 'axios';
 
 const Modal = ({ isOpen, onClose, children }) => {
