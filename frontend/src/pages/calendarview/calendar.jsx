@@ -1,12 +1,69 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./calendar.css";
 
 const Calendar = () => {
     const [currentDate, setCurrentDate] = useState(new Date()); // Mes actual
     const [availability, setAvailability] = useState({});
-    const [selectedDay, setSelectedDay] = useState(null); // Día seleccionado
-    const [isModalOpen, setIsModalOpen] = useState(false); // Estado del modal
-    const [selectedAvailability, setSelectedAvailability] = useState(null); // Disponibilidad seleccionada en el modal
+    const [selectedDay, setSelectedDay] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedAvailability, setSelectedAvailability] = useState(null);
+    const [selectedHours, setSelectedHours] = useState([]);
+    const [isMouseDown, setIsMouseDown] = useState(false);
+    const [startHour, setStartHour] = useState(null);
+    const [currentHoverHour, setCurrentHoverHour] = useState(null);
+    const hourGridRef = useRef(null);
+
+    // Generar horas con timestamps para facilitar la comparación
+    const generateHours = () => {
+        const hours = [];
+        for (let hour = 8; hour <= 20; hour++) {
+            for (let minute = 0; minute < 60; minute += 30) {
+                const time = `${hour}:${minute === 0 ? "00" : minute}`;
+                const timestamp = hour * 100 + minute;
+                hours.push({
+                    value: time,
+                    label: hour > 12 
+                        ? `${hour - 12}:${minute === 0 ? "00" : minute} PM` 
+                        : `${hour}:${minute === 0 ? "00" : minute} AM`,
+                    timestamp
+                });
+            }
+        }
+        return hours;
+    };
+
+    const handleMouseDown = (hour) => {
+        setIsMouseDown(true);
+        setStartHour(hour);
+        toggleHour(hour);
+    };
+
+    const handleMouseEnter = (hour) => {
+        if (isMouseDown) {
+            setCurrentHoverHour(hour);
+            selectRange(startHour, hour);
+        }
+    };
+
+    const handleMouseUp = () => {
+        setIsMouseDown(false);
+        setStartHour(null);
+        setCurrentHoverHour(null);
+    };
+
+    const selectRange = (start, end) => {
+        const hours = generateHours();
+        const startIndex = hours.findIndex(h => h.value === start);
+        const endIndex = hours.findIndex(h => h.value === end);
+        
+        const min = Math.min(startIndex, endIndex);
+        const max = Math.max(startIndex, endIndex);
+        
+        const range = hours.slice(min, max + 1).map(h => h.value);
+        const newSelection = Array.from(new Set([...selectedHours, ...range]));
+        
+        setSelectedHours(newSelection);
+    };
 
     // Cambiar de mes
     const changeMonth = (offset) => {
@@ -49,22 +106,56 @@ const Calendar = () => {
 
     // Manejar clic en un día
     const handleDayClick = (day) => {
-        if (isPastDay(day)) return; // No hacer nada si es un día pasado
-        setSelectedDay(day); // Guardar el día seleccionado
-        setSelectedAvailability(availability[`${currentDate.getFullYear()}-${currentDate.getMonth()}-${day}`]); // Cargar disponibilidad actual
-        setIsModalOpen(true); // Abrir el modal
+        if (isPastDay(day)) return;
+        setSelectedDay(day);
+        const dateKey = createDateKey(day);
+        setSelectedAvailability(availability[dateKey]?.status ?? null);
+        setSelectedHours(availability[dateKey]?.hours || []);
+        setIsModalOpen(true);
     };
 
     // Guardar la disponibilidad seleccionada
     const handleSave = () => {
         if (selectedDay === null) return;
-        const dateKey = `${currentDate.getFullYear()}-${currentDate.getMonth()}-${selectedDay}`;
+        const dateKey = createDateKey(selectedDay);
+
+        const newAvailability = {
+            status: selectedAvailability,
+            hours: selectedAvailability ? selectedHours : [] // Solo guardar horas si está disponible
+        };
+
         setAvailability((prev) => ({
             ...prev,
-            [dateKey]: selectedAvailability,
+            [dateKey]: newAvailability,
         }));
-        setIsModalOpen(false); // Cerrar el modal
+        setIsModalOpen(false);
     };
+
+    // Crear clave única para el día
+    const createDateKey = (day) =>
+        `${currentDate.getFullYear()}-${currentDate.getMonth()}-${day}`;
+
+    // Alternar selección de una hora
+    const toggleHour = (hour) => {
+        setSelectedHours(prev => {
+            if (prev.includes(hour)) {
+                return prev.filter(h => h !== hour);
+            }
+            return [...prev, hour];
+        });
+    };
+
+    // Efecto para manejar eventos globales del mouse
+    useEffect(() => {
+        const handleGlobalMouseUp = () => {
+            if (isMouseDown) {
+                handleMouseUp();
+            }
+        };
+
+        document.addEventListener('mouseup', handleGlobalMouseUp);
+        return () => document.removeEventListener('mouseup', handleGlobalMouseUp);
+    }, [isMouseDown]);
 
     return (
         <article className="calendar">
@@ -83,23 +174,29 @@ const Calendar = () => {
                     </article>
                 ))}
 
-                {generateCalendarDays().map(({ day, isPast }, index) => (
-                    <article
-                        key={day || `empty-${index}`}
-                        className={`day ${isPast ? "past" : availability[`${currentDate.getFullYear()}-${currentDate.getMonth()}-${day}`] ? "available" : "unavailable"}`}
-                        onClick={() => !isPast && handleDayClick(day)}
-                    >
-                        {day}
-                    </article>
-                ))}
+                {generateCalendarDays().map(({ day, isPast }, index) => {
+                    const dateKey = createDateKey(day);
+                    const isAvailable = availability[dateKey]?.status;
+
+                    return (
+                        <article
+                            key={day || `empty-${index}`}
+                            className={`day ${isPast ? "past" : isAvailable ? "available" : "unavailable"}`}
+                            onClick={() => !isPast && handleDayClick(day)}
+                        >
+                            {day}
+                        </article>
+                    );
+                })}
             </article>
 
             {/* Modal para seleccionar disponibilidad */}
             {isModalOpen && (
-                <article className="modal-overlay">
-                    <article className="modal">
-                        <h3>Seleccionar disponibilidad para el día {selectedDay}</h3>
-                        <article className="modal-options">
+                <div className="modal-overlay">
+                    <div className="modal">
+                        <h3>Disponibilidad para el {selectedDay} de {currentDate.toLocaleString("default", { month: "long" })}</h3>
+
+                        <div className="availability-toggle">
                             <label>
                                 <input
                                     type="radio"
@@ -118,13 +215,39 @@ const Calendar = () => {
                                 />
                                 No disponible
                             </label>
-                        </article>
-                        <article className="modal-actions">
+                        </div>
+
+                        {selectedAvailability && (
+                            <div className="hour-selection">
+                                <h4>Selecciona las horas disponibles:</h4>
+                                <div 
+                                    className="hour-grid"
+                                    ref={hourGridRef}
+                                    onMouseLeave={() => handleMouseUp()}
+                                >
+                                    {generateHours().map((hour) => (
+                                        <div
+                                            key={hour.value}
+                                            className={`hour-btn ${
+                                                selectedHours.includes(hour.value) ? "selected" : ""
+                                            } ${currentHoverHour === hour.value ? "hovered" : ""}`}
+                                            onMouseDown={() => handleMouseDown(hour.value)}
+                                            onMouseEnter={() => handleMouseEnter(hour.value)}
+                                            onMouseUp={handleMouseUp}
+                                        >
+                                            {hour.label}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="modal-actions">
                             <button onClick={() => setIsModalOpen(false)}>Cancelar</button>
                             <button onClick={handleSave}>Guardar</button>
-                        </article>
-                    </article>
-                </article>
+                        </div>
+                    </div>
+                </div>
             )}
         </article>
     );
