@@ -46,21 +46,24 @@ export const LoggedView = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/'); // Redirige al usuario a la página de inicio de sesión después de cerrar sesión
+    navigate('/');
+    window.location.reload(); // Redirige al usuario a la página de inicio de sesión después de cerrar sesión
   };
 
   const accessToken = localStorage.getItem('access_token');
   let decodedToken = null;
   let userRole = '';
-  let userName = decodedToken && decodedToken.username ? decodedToken.username : '';
+  let userName = '';
 
-  try {
-    decodedToken = jwtDecode(accessToken);
-    userRole = decodedToken.rol || '';
-    userName = decodedToken.username;
-  } catch (error) {
-    console.error('Error decoding token:', error);
-    // Handle the error, e.g., redirect to login or show a message
+  if (accessToken) {
+    try {
+      decodedToken = jwtDecode(accessToken);
+      userRole = decodedToken.rol || '';
+      userName = decodedToken.username;
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      // Handle the error, e.g., redirect to login or show a message
+    }
   }
 
   const [images, setImages] = useState([]);
@@ -85,109 +88,79 @@ export const LoggedView = () => {
 
   return (
     <>
-      <header>
-        <img className="elisalogo" src={elisaLogo} alt="Elisa Logo" />
-        <h1 className="elisatitle">ELISA</h1>
-        <nav className="navElisa">
-          <ul>
-            <li>
-              <Link to="/home">Inicio</Link>
-            </li>
-            <li>
-              <Link to="/galeria">Galeria</Link>
-            </li>
-            <li>
-              <Link to="/servicios">Servicios</Link>
-            </li>
-            <li>
-              <Link to="/agendar-cita">Agendar Cita</Link>
-            </li>
-          </ul>
+      <article className="relative" ref={menuRef}>
+        <button className="UserIcon" onClick={() => setMenuOpen(!menuOpen)}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="size-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+            />
+          </svg>
+        </button>
 
-          <article className="relative" ref={menuRef}>
-            <button className="UserIcon" onClick={() => setMenuOpen(!menuOpen)}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-6"
+        {/* Menú desplegable */}
+        {menuOpen && (
+          <article className="userMenu">
+
+            <p>
+              {userName}
+            </p>
+
+            <article className="item">
+              <Link
+                to="/perfil"
+                className="block px-4 py-2 hover:bg-gray-200"
+                onClick={() => setMenuOpen(false)}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                />
-              </svg>
-            </button>
+                Mi Perfil
+              </Link>
+            </article>
 
-            {/* Menú desplegable */}
-            {menuOpen && (
-              <article className="userMenu">
+            <article className="item">
+              <Link
+                to="/configuracion"
+                className="block px-4 py-2 hover:bg-gray-200"
+                onClick={() => setMenuOpen(false)}
+              >
+                Configuración
+              </Link>
+            </article>
 
-                <p>
-                  {userName}
-                </p>
-
+            {
+              userRole === 'manicurista' && (
                 <article className="item">
-                  <Link
-                    to="/perfil"
-                    className="block px-4 py-2 hover:bg-gray-200"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Mi Perfil
-                  </Link>
+                    <button onClick={() => setModalOpen(true)}>
+                      Subir imagen
+                    </button>
                 </article>
+              )
+            }
 
-                <article className="item">
-                  <Link
-                    to="/configuracion"
-                    className="block px-4 py-2 hover:bg-gray-200"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Configuración
-                  </Link>
-                </article>
-
-                {
-                  userRole === 'manicurista' && (
-                    <article className="item">
-                        <button onClick={() => setModalOpen(true)}>
-                          Subir imagen
-                        </button>
-                    </article>
-                  )
-                }
-
-                <article className="item">
-                  <button
-                    onClick={handleLogout}
-                  >
-                    Cerrar Sesión
-                  </button>
-                </article>
-              </article>
-            )}
+            <article className="item">
+              <button
+                onClick={handleLogout}
+              >
+                Cerrar Sesión
+              </button>
+            </article>
           </article>
-        </nav>
-        <article className="divisionBar">
-        </article>
-      </header>
+        )}
+      </article>
 
-      <main>
-        <article>
-
-          <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
-            <h2>Subir imagenes</h2>
-            <UploadWorkImage onImageUpload={handleImageUpload}/>
-          </Modal>
-        </article>
-
-      
-        <ImageGallery images={images} />
-
-      </main>
+      <article>
+        <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
+          <h2>Subir imagenes</h2>
+          <UploadWorkImage onImageUpload={handleImageUpload}/>
+        </Modal>
+      </article>
     </>
   );
 };

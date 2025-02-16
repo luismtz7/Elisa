@@ -8,7 +8,7 @@ import { LoggedView } from './pages/loggedview/loggedview';
 import { PrivateRoute } from './PrivateRoute';
 import { useState, useEffect } from 'react'; 
 import axios from 'axios';
-import { Gallery } from './pages/galleryview/gallery'; 
+import { Gallery } from './pages/galleryview/gallery';
 
 import '../src/pages/loggedview/modal.css';
 
@@ -78,25 +78,24 @@ const HomePage = ({ isAuthenticated }) => {
                 <li onClick={openSecondModal}>Registrarse</li>
               </>
             )}
-            {isAuthenticated && <li>Mi Perfil</li>}
           </ul>
+          
+          {isAuthenticated && <LoggedView />}
         </nav>
       </header>
-
-      <article>
-        <Login
-          isOpen={activeModal === "login"}
-          onClose={closeModal}
-          onOpenSecondModal={openSecondModal} />
-        <Register 
-          isOpen={activeModal === "register"}
-          onClose={closeModal}
-          onOpenFirstModal={openFirstModal} />
-      </article>
 
       <main>
         <Outlet />
       </main>  
+
+      <Login
+        isOpen={activeModal === "login"}
+        onClose={closeModal}
+        onOpenSecondModal={openSecondModal} />
+      <Register 
+        isOpen={activeModal === "register"}
+        onClose={closeModal}
+        onOpenFirstModal={openFirstModal} />
     </>
   );
 };

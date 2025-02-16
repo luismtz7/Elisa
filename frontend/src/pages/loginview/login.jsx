@@ -1,27 +1,20 @@
-// src/components/Login.jsx
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../api';
-//import  GoogleLoginButton from '..//GoogleLoginButton'; // Importa el botón de Google
 import './login.css';
 import '../loggedview/modal.css';
 
-
-export const Login = ({isOpen, onClose, onOpenSecondModal}) => {
-    if (!isOpen) return null;
-
+export const Login = ({ isOpen, onClose, onOpenSecondModal }) => {
+    // Hooks llamados incondicionalmente
     const navigate = useNavigate();
     const [credentials, setCredentials] = useState({
         username: '',
         password: '',
     });
 
-    {/*
-    const handleBackClick = () => {
-        navigate('/'); // Go back
-    };
-    */}
+    // Condición después de los hooks
+    if (!isOpen) return null;
+
     const handleChange = (e) => {
         setCredentials({
             ...credentials,
@@ -36,17 +29,18 @@ export const Login = ({isOpen, onClose, onOpenSecondModal}) => {
             localStorage.setItem('access_token', response.access_token);
             localStorage.setItem('refresh_token', response.refresh_token);
             alert('Inicio de sesión exitoso');
-            navigate('/home'); // Redirige al usuario a la página principal después del login
+            navigate('/');
+            window.location.reload();
         } catch (error) {
             alert(error.error || 'Error al iniciar sesión');
         }
     };
 
     return (
-        <>  
+        <>
             <section className='modal-overlay' onClick={onClose}>
                 <article className="modal-content" onClick={(e) => e.stopPropagation()}>
-                    <button onClick={onClose}>Cerrar</button>
+                <button onClick={onClose}>Cerrar</button>
                     <h1>Iniciar sesión</h1>
                     <form className="form" onSubmit={handleSubmit}>
                         <article className="flex-column">
@@ -108,7 +102,6 @@ export const Login = ({isOpen, onClose, onOpenSecondModal}) => {
                         </article>
                         */}
                     </form>
-
                 </article>
             </section>
         </>
