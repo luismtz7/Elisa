@@ -10,8 +10,10 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Gallery } from './pages/galleryview/gallery';
 import { Calendar } from './pages/calendarview/calendar';
+import { jwtDecode } from 'jwt-decode';
 
 import '../src/pages/loggedview/modal.css';
+import { use } from 'react';
 
 function App() {
 
@@ -63,6 +65,21 @@ const HomePage = ({ isAuthenticated }) => {
       setActiveModal(null); // Cierra todas las modales
     };
 
+    
+    const accessToken = localStorage.getItem('access_token');// Obtiene el token de acceso
+    let decodedToken = null;
+    let userRole = '';
+
+      if (accessToken) {
+        try {
+          decodedToken = jwtDecode(accessToken);
+          userRole = decodedToken.rol || '';
+        } catch (error) {
+          console.error('Error decoding token:', error);
+          // Handle the error, e.g., redirect to login or show a message
+        }
+      }
+
   return (
     <>
       <header>
@@ -73,7 +90,15 @@ const HomePage = ({ isAuthenticated }) => {
             <li><Link to="/">Inicio</Link></li>
             <li><Link to="/gallery">Galeria</Link></li>
             <li><Link to="/servicios">Servicios</Link></li>
-            <li><Link to="/agendar-cita">Agendar Cita</Link></li>
+            
+            {userRole === 'manicurista' && (
+                <li><Link to="/agendar-cita">Citas</Link></li>
+            )}
+
+            {userRole === 'cliente' && (
+              <li><Link to="/agendar-cita">Agendar cita</Link></li>
+            )}
+            
             {!isAuthenticated && (
               <>
                 <li onClick={openFirstModal}>Iniciar Sesión</li>
