@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 from decouple import config
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -94,14 +98,15 @@ WSGI_APPLICATION = 'esencialisa.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# Configuración de la base de datos
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', default='5432'),
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT'),
     }
 }
 
@@ -153,8 +158,9 @@ CORS_ALLOW_CREDENTIALS = True  # Permite cookies cross-origin
 
 AUTH_USER_MODEL = 'users.User'
 
-JWT_PRIVATE_KEY = config("JWT_PRIVATE_KEY").replace("\\n", "\n")
-JWT_PUBLIC_KEY = config("JWT_PUBLIC_KEY").replace("\\n", "\n")
+# Configuración de JWT
+JWT_PRIVATE_KEY = env('JWT_PRIVATE_KEY')
+JWT_PUBLIC_KEY = env('JWT_PUBLIC_KEY')
 
 
 # Permitir Cookies Seguras
