@@ -8,3 +8,7 @@ from .serializers import ManicuristSerializer
 class ManicuristViewSet(viewsets.ModelViewSet):
     queryset = Manicurist.objects.all()
     serializer_class = ManicuristSerializer
+
+    def create(self, request, *args, **kwargs):
+        print("Datos recibidos:", request.data)  # Imprime los datos recibidos
+        return super().create(request, *args, **kwargs)

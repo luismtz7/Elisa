@@ -1,0 +1,185 @@
+
+
+.calendar {
+    width: fit-content;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    position: relative;
+}
+
+.month-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.weekday {
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+    background: #f0f0f0;
+}
+
+.day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 4px;
+}
+
+.day.available {
+    background: #e0ffe0;
+    color: green;
+}
+
+.day.unavailable {
+    background: #ffe0e0;
+    color: red;
+}
+
+.day.past {
+    background: #f8f8f8;
+    color: #999;
+    cursor: default;
+}
+
+.day:not(.past):hover {
+    background: #007bff;
+    color: white;
+    transform: scale(1.05);
+}
+
+/* Estilos del modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+}
+
+.modal-options {
+    margin: 20px 0;
+}
+
+.modal-options label {
+    display: block;
+    margin: 10px 0;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.modal-actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.modal-actions button:hover {
+    background: #007bff;
+    color: white;
+}
+
+/* Estilos adicionales para la selección de horas */
+.availability-toggle {
+    margin: 15px 0;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.hour-selection {
+    margin: 20px 0;
+}
+
+.hour-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.hour-btn {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #f8f8f8;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.hour-btn.selected {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.hour-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Ajustes para el modal */
+.modal {
+    width: 400px;
+    max-width: 90%;
+}
+
+.modal h3 {
+    margin-bottom: 15px;
+}
+
+.modal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Agrega estos estilos a tu CSS */
+.hour-btn {
+    user-select: none;
+    transition: background-color 0.1s;
+}
+
+.hour-btn.hovered {
+    background-color: #007bff33 !important;
+}
+
+.hour-btn.selected {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}

@@ -1,16 +1,20 @@
 // App.js
-import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link, Navigate, Outlet } from 'react-router-dom';
 import elisaLogo from './assets/logowebelisa.svg';
 import './App.css';
 import { Login } from './pages/loginview/login';
 import { Register } from './pages/registerview/register';
 import { LoggedView } from './pages/loggedview/loggedview'; 
 import { PrivateRoute } from './PrivateRoute';
-import { useState, useEffect } from 'react'; // Add this import
-import axios from 'axios'; // Add this import
-import { ImageGallery } from './pages/galleryview/imagegallery'; // Add this import
+import { useState, useEffect } from 'react'; 
+import axios from 'axios';
+import { Gallery } from './pages/galleryview/gallery';
+import { Calendar } from './pages/calendarview/calendar';
+import { jwtDecode } from 'jwt-decode';
+import { Book } from './pages/calendarview/book';
 
 import '../src/pages/loggedview/modal.css';
+import { use } from 'react';
 
 function App() {
 
@@ -18,11 +22,11 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={isAuthenticated ? <Navigate to="/home" /> : <HomePage />} />
-        {/*
-        <Route element={<Login />} />
-        <Route element={<Register />} />
-        */}
+        <Route path="/" element={<HomePage isAuthenticated={isAuthenticated} />}>
+          <Route path='/gallery' element={<Gallery />}/>
+          <Route path='/citas' element={<Calendar />}/>
+          <Route path='/agendar-cita' element={<Book />}/>
+        </Route>
         <Route element={<PrivateRoute />} >
           <Route path="/home" element={<LoggedView />} />
         </Route>
@@ -31,7 +35,7 @@ function App() {
   );
 }
 
-const HomePage = () => {
+const HomePage = ({ isAuthenticated }) => {
       // Cargar imágenes al iniciar la aplicación
     useEffect(() => {
       const fetchImages = async () => {
@@ -63,6 +67,21 @@ const HomePage = () => {
       setActiveModal(null); // Cierra todas las modales
     };
 
+    
+    const accessToken = localStorage.getItem('access_token');// Obtiene el token de acceso
+    let decodedToken = null;
+    let userRole = '';
+
+      if (accessToken) {
+        try {
+          decodedToken = jwtDecode(accessToken);
+          userRole = decodedToken.rol || '';
+        } catch (error) {
+          console.error('Error decoding token:', error);
+          // Handle the error, e.g., redirect to login or show a message
+        }
+      }
+
   return (
     <>
       <header>
@@ -71,27 +90,41 @@ const HomePage = () => {
         <nav>
           <ul>
             <li><Link to="/">Inicio</Link></li>
-            <li><Link to="/galeria">Galeria</Link></li>
+            <li><Link to="/gallery">Galeria</Link></li>
             <li><Link to="/servicios">Servicios</Link></li>
-            <li><Link to="/agendar-cita">Agendar Cita</Link></li>
-            <li onClick={openFirstModal}>Iniciar Sesión</li>
-            <li onClick={openSecondModal}>Registrarse</li>
+            
+            {userRole === 'manicurista' && (
+                <li><Link to="/citas">Citas</Link></li>
+            )}
+
+            {userRole === 'cliente' && (
+              <li><Link to="/agendar-cita">Agendar cita</Link></li>
+            )}
+            
+            {!isAuthenticated && (
+              <>
+                <li onClick={openFirstModal}>Iniciar Sesión</li>
+                <li onClick={openSecondModal}>Registrarse</li>
+              </>
+            )}
           </ul>
+          
+          {isAuthenticated && <LoggedView />}
         </nav>
       </header>
 
-      <article>
-        <Login
+      <main>
+        <Outlet />
+      </main>  
+
+      <Login
         isOpen={activeModal === "login"}
         onClose={closeModal}
         onOpenSecondModal={openSecondModal} />
-        <Register 
+      <Register 
         isOpen={activeModal === "register"}
         onClose={closeModal}
-        onOpenFirstModal={openFirstModal}/>
-      </article>
-
-      <ImageGallery images={images} />
+        onOpenFirstModal={openFirstModal} />
     </>
   );
 };

@@ -95,9 +95,9 @@ WSGI_APPLICATION = 'esencialisa.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'elisa_db_dev',
+        'NAME': 'elisa_db_devdos',
         'USER': 'luismartinez',
-        'PASSWORD': 'lm17052019',
+        'PASSWORD': 'K@mze1l07#',
         'HOST': 'localhost',  # O la dirección de tu servidor PostgreSQL
         'PORT': '5432',       # El puerto por defecto de PostgreSQL
     }
