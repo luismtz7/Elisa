@@ -11,6 +11,7 @@ import axios from 'axios';
 import { Gallery } from './pages/galleryview/gallery';
 import { Calendar } from './pages/calendarview/calendar';
 import { jwtDecode } from 'jwt-decode';
+import { Book } from './pages/calendarview/book';
 
 import '../src/pages/loggedview/modal.css';
 import { use } from 'react';
@@ -23,7 +24,8 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage isAuthenticated={isAuthenticated} />}>
           <Route path='/gallery' element={<Gallery />}/>
-          <Route path='/agendar-cita' element={<Calendar />}/>
+          <Route path='/citas' element={<Calendar />}/>
+          <Route path='/agendar-cita' element={<Book />}/>
         </Route>
         <Route element={<PrivateRoute />} >
           <Route path="/home" element={<LoggedView />} />
@@ -92,7 +94,7 @@ const HomePage = ({ isAuthenticated }) => {
             <li><Link to="/servicios">Servicios</Link></li>
             
             {userRole === 'manicurista' && (
-                <li><Link to="/agendar-cita">Citas</Link></li>
+                <li><Link to="/citas">Citas</Link></li>
             )}
 
             {userRole === 'cliente' && (
