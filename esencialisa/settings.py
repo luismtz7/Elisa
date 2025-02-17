@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     'works',
     'appointments',
     'notifications',
+    'docs',
+    'drf_spectacular',
 ]
 
 SITE_ID = 1
@@ -95,11 +97,11 @@ WSGI_APPLICATION = 'esencialisa.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'elisa_db_devdos',
-        'USER': 'luismartinez',
-        'PASSWORD': 'K@mze1l07#',
-        'HOST': 'localhost',  # O la dirección de tu servidor PostgreSQL
-        'PORT': '5432',       # El puerto por defecto de PostgreSQL
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='5432'),
     }
 }
 
@@ -163,3 +165,12 @@ CSRF_COOKIE_SECURE = True
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    #DIOS COMO COSTÓ
+    'SCHEMA_PATH_PREFIX': r"/api/",
+}

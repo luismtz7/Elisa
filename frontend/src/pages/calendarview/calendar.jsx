@@ -4,14 +4,14 @@ import { jwtDecode } from "jwt-decode";
 
 const Calendar = () => {
     const [currentDate, setCurrentDate] = useState(new Date()); // Mes actual
-    const [availability, setAvailability] = useState({});
-    const [selectedDay, setSelectedDay] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedAvailability, setSelectedAvailability] = useState(null);
-    const [selectedHours, setSelectedHours] = useState([]);
-    const [isMouseDown, setIsMouseDown] = useState(false);
-    const [startHour, setStartHour] = useState(null);
-    const [currentHoverHour, setCurrentHoverHour] = useState(null);
+    const [availability, setAvailability] = useState({});     // Disponibilidad del manicurista
+    const [selectedDay, setSelectedDay] = useState(null);   // Día seleccionado
+    const [isModalOpen, setIsModalOpen] = useState(false);  // Estado del modal
+    const [selectedAvailability, setSelectedAvailability] = useState(null); // Disponibilidad seleccionada
+    const [selectedHours, setSelectedHours] = useState([]); // Horas seleccionadas
+    const [isMouseDown, setIsMouseDown] = useState(false);  // Estado del mouse
+    const [startHour, setStartHour] = useState(null);    // Hora de inicio de la selección
+    const [currentHoverHour, setCurrentHoverHour] = useState(null); // Hora actual del mouse
     const hourGridRef = useRef(null);
 
     // Generar horas con timestamps para facilitar la comparación
@@ -33,12 +33,14 @@ const Calendar = () => {
         return hours;
     };
 
+    // Manejar el evento mouseDown
     const handleMouseDown = (hour) => {
         setIsMouseDown(true);
         setStartHour(hour);
         toggleHour(hour);
     };
 
+    // Manejar el evento mouseEnter
     const handleMouseEnter = (hour) => {
         if (isMouseDown) {
             setCurrentHoverHour(hour);
@@ -46,12 +48,14 @@ const Calendar = () => {
         }
     };
 
+    // Manejar el evento mouseUp
     const handleMouseUp = () => {
         setIsMouseDown(false);
         setStartHour(null);
         setCurrentHoverHour(null);
     };
 
+    // Seleccionar un rango de horas
     const selectRange = (start, end) => {
         const hours = generateHours();
         const startIndex = hours.findIndex(h => h.value === start);
@@ -115,6 +119,7 @@ const Calendar = () => {
         setIsModalOpen(true);
     };
 
+    // Obtener el token de acceso y extraer el ID del manicurista
     const accessToken = localStorage.getItem('access_token');
     let decodedToken = null;
     let userId = '';
@@ -199,9 +204,7 @@ const Calendar = () => {
         });
     };
 
-        // ==============================================
     // 1. useEffect para cargar disponibilidad inicial
-    // ==============================================
     useEffect(() => {
         const loadAvailability = async () => {
             try {

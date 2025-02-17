@@ -38,22 +38,28 @@ class Appointment(models.Model):
         return None
 
     def save(self, *args, **kwargs):
-        # Validar que la fecha y hora seleccionadas estén dentro del horario disponible de la manicurista
-        if self.fecha_cita and self.hora_cita:
-            date_key = self.fecha_cita.strftime('%Y-%m-%d')
-            if self.manicurista.horario_disponible and date_key in self.manicurista.horario_disponible:
-                details = self.manicurista.horario_disponible[date_key]
-                if not details['status'] or self.hora_cita.strftime('%H:%M') not in details['hours']:
-                    raise ValueError("La fecha y hora seleccionadas no están disponibles.")
-            else:
-                raise ValueError("La fecha seleccionada no está disponible.")
-        else:
-            # Asignar fecha_cita y hora_cita antes de guardar si no están definidos
-            if not self.fecha_cita:
-                self.fecha_cita = self.get_fecha_cita()
-            if not self.hora_cita:
-                self.hora_cita = self.get_hora_cita()
-            if not self.fecha_cita or not self.hora_cita:
-                raise ValueError("No hay disponibilidad para la cita.")
+        # Validar que la manicurista tenga horario disponible
+        if not self.manicurista.horario_disponible:
+            raise ValueError("La manicurista no tiene horario configurado.")
 
+        # Convertir fecha_cita a string para coincidir con la clave del JSON
+        date_key = self.fecha_cita.strftime("%Y-%m-%d")  # Formato: "2023-10-25"
+
+        # Verificar si la fecha está en el horario_disponible y está habilitada
+        if date_key not in self.manicurista.horario_disponible:
+            raise ValueError("La fecha seleccionada no está disponible.")
+        
+        fecha_data = self.manicurista.horario_disponible[date_key]
+        
+        if not fecha_data["status"]:
+            raise ValueError("La fecha está marcada como no disponible.")
+
+        # Convertir hora_cita a string (ej: "10:00")
+        hora_str = self.hora_cita.strftime("%H:%M")
+
+        # Verificar si la hora está en las horas disponibles
+        if hora_str not in fecha_data["hours"]:
+            raise ValueError("La hora seleccionada no está disponible.")
+
+        # Guardar la cita si pasa todas las validaciones
         super().save(*args, **kwargs)
