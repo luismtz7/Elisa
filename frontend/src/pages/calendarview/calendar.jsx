@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./calendar.css";
+import { jwtDecode } from "jwt-decode";
 
 const Calendar = () => {
     const [currentDate, setCurrentDate] = useState(new Date()); // Mes actual
@@ -114,21 +115,74 @@ const Calendar = () => {
         setIsModalOpen(true);
     };
 
+    const accessToken = localStorage.getItem('access_token');
+    let decodedToken = null;
+    let userId = '';
+
+    if (accessToken) {
+        try {
+            decodedToken = jwtDecode(accessToken);
+            userId = decodedToken.manicurist_id || '';
+        } catch (error) {
+            console.error('Error decoding token:', error);
+            // Handle the error, e.g., redirect to login or show a message
+        }
+    } else {
+        console.error('No access token found');
+        // Handle the case where there is no access token, e.g., redirect to login or show a message
+    }
+
     // Guardar la disponibilidad seleccionada
-    const handleSave = () => {
+    const handleSave = async () => {
         if (selectedDay === null) return;
         const dateKey = createDateKey(selectedDay);
-
+    
         const newAvailability = {
+            date: dateKey,
             status: selectedAvailability,
-            hours: selectedAvailability ? selectedHours : [] // Solo guardar horas si está disponible
+            hours: selectedAvailability ? selectedHours : [],
         };
-
-        setAvailability((prev) => ({
-            ...prev,
-            [dateKey]: newAvailability,
-        }));
-        setIsModalOpen(false);
+    
+        try {
+            // Obtener el ID del manicurista (userId)
+            const manicuristaId = Number(userId);
+    
+            // Obtener el horario actual del manicurista
+            const responseGet = await fetch(`http://127.0.0.1:8000/api/Manicurists/${manicuristaId}/`);
+            const manicuristData = await responseGet.json();
+    
+            // Actualizar el horario disponible
+            const updatedHorario = {
+                ...manicuristData.horario_disponible,
+                [dateKey]: newAvailability,
+            };
+    
+            // Enviar la actualización al backend
+            const responseUpdate = await fetch(`http://127.0.0.1:8000/api/Manicurists/${manicuristaId}/`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+                body: JSON.stringify({
+                    horario_disponible: updatedHorario,
+                }),
+            });
+    
+            if (responseUpdate.ok) {
+                // Actualizar el estado availability en el frontend
+                setAvailability((prevAvailability) => ({
+                    ...prevAvailability,
+                    [dateKey]: newAvailability,
+                }));
+    
+                setIsModalOpen(false);
+            } else {
+                console.error('Error saving availability');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
 
     // Crear clave única para el día
@@ -144,6 +198,27 @@ const Calendar = () => {
             return [...prev, hour];
         });
     };
+
+        // ==============================================
+    // 1. useEffect para cargar disponibilidad inicial
+    // ==============================================
+    useEffect(() => {
+        const loadAvailability = async () => {
+            try {
+                const manicuristaId = Number(userId);
+                const response = await fetch(`http://127.0.0.1:8000/api/Manicurists/${manicuristaId}/`);
+                
+                if (response.ok) {
+                    const manicuristData = await response.json();
+                    setAvailability(manicuristData.horario_disponible || {});
+                }
+            } catch (error) {
+                console.error('Error loading availability:', error);
+            }
+        };
+
+        if (userId) loadAvailability();
+    }, [userId]); // Se ejecuta al cambiar userId
 
     // Efecto para manejar eventos globales del mouse
     useEffect(() => {
@@ -192,11 +267,11 @@ const Calendar = () => {
 
             {/* Modal para seleccionar disponibilidad */}
             {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal">
+                <article className="modal-overlay">
+                    <article className="modal">
                         <h3>Disponibilidad para el {selectedDay} de {currentDate.toLocaleString("default", { month: "long" })}</h3>
 
-                        <div className="availability-toggle">
+                        <article className="availability-toggle">
                             <label>
                                 <input
                                     type="radio"
@@ -215,18 +290,18 @@ const Calendar = () => {
                                 />
                                 No disponible
                             </label>
-                        </div>
+                        </article>
 
                         {selectedAvailability && (
-                            <div className="hour-selection">
+                            <article className="hour-selection">
                                 <h4>Selecciona las horas disponibles:</h4>
-                                <div 
+                                <article 
                                     className="hour-grid"
                                     ref={hourGridRef}
                                     onMouseLeave={() => handleMouseUp()}
                                 >
                                     {generateHours().map((hour) => (
-                                        <div
+                                        <article
                                             key={hour.value}
                                             className={`hour-btn ${
                                                 selectedHours.includes(hour.value) ? "selected" : ""
@@ -236,18 +311,18 @@ const Calendar = () => {
                                             onMouseUp={handleMouseUp}
                                         >
                                             {hour.label}
-                                        </div>
+                                        </article>
                                     ))}
-                                </div>
-                            </div>
+                                </article>
+                            </article>
                         )}
 
-                        <div className="modal-actions">
+                        <article className="modal-actions">
                             <button onClick={() => setIsModalOpen(false)}>Cancelar</button>
                             <button onClick={handleSave}>Guardar</button>
-                        </div>
-                    </div>
-                </div>
+                        </article>
+                    </article>
+                </article>
             )}
         </article>
     );
