@@ -15,11 +15,14 @@ import os
 from decouple import config
 import environ
 
-env = environ.Env()
-environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+env = environ.Env()
+# Especifica el archivo .env
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 
 # Quick-start development settings - unsuitable for production
@@ -159,8 +162,34 @@ CORS_ALLOW_CREDENTIALS = True  # Permite cookies cross-origin
 AUTH_USER_MODEL = 'users.User'
 
 # Configuración de JWT
-JWT_PRIVATE_KEY = env('JWT_PRIVATE_KEY')
-JWT_PUBLIC_KEY = env('JWT_PUBLIC_KEY')
+import psycopg2
+from psycopg2 import sql
+from django.core.exceptions import ImproperlyConfigured
+
+# Conectar a la base de datos
+conn = psycopg2.connect(
+    dbname=os.getenv("DB_NAME"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD"),
+    host=os.getenv("DB_HOST"),
+    port=os.getenv("DB_PORT")
+)
+
+cur = conn.cursor()
+
+# Obtener la clave privada y pública más recientes
+cur.execute(sql.SQL("SELECT private_key, public_key FROM jwt_keys ORDER BY created_at DESC LIMIT 1"))
+row = cur.fetchone()
+
+if row:
+    JWT_PRIVATE_KEY = row[0]
+    JWT_PUBLIC_KEY = row[1]
+else:
+    raise ImproperlyConfigured("No se encontraron las claves en la base de datos")
+
+# Cerrar conexión
+cur.close()
+conn.close()
 
 
 # Permitir Cookies Seguras
@@ -177,6 +206,5 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    #DIOS COMO COSTÓ
     'SCHEMA_PATH_PREFIX': r"/api/",
 }
