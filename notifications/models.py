@@ -3,7 +3,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from users.models import User
-from appointments.models import Appointment
+from appointment.models import Appointment
 # Create your models here.
 
 

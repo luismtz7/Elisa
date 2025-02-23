@@ -27,7 +27,7 @@ urlpatterns = [
     path('api/', include('manicurists.urls')),
     path('api/', include('clients.urls')),
     path('api/', include('works.urls')),
-    path('api/', include('appointments.urls')),
+    path('api/', include('appointment.urls')),
     path('api/', include('notifications.urls')),
 ]
 

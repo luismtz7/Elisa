@@ -54,10 +54,10 @@ INSTALLED_APPS = [
     'manicurists',
     'clients',
     'works',
-    'appointments',
     'notifications',
     'docs',
     'drf_spectacular',
+    'appointment'
 ]
 
 SITE_ID = 1
