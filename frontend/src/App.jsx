@@ -91,7 +91,6 @@ const HomePage = ({ isAuthenticated }) => {
           <ul>
             <li><Link to="/">Inicio</Link></li>
             <li><Link to="/gallery">Galeria</Link></li>
-            <li><Link to="/servicios">Servicios</Link></li>
             
             {userRole === 'manicurista' && (
                 <li><Link to="/citas">Citas</Link></li>

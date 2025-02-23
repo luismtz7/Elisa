@@ -5,19 +5,18 @@ import {jwtDecode} from 'jwt-decode';
 const UploadWorkImage = ({ onImageUpload }) => {
     const accessToken = localStorage.getItem('access_token');
     let decodedToken = null;
-    let userId = '';
+    let manicurist_id = '';
 
     try {
         decodedToken = jwtDecode(accessToken);
-        userId = decodedToken.id || '';
+        manicurist_id = decodedToken.manicurist_id || '';
     } catch (error) {
         console.error('Error decoding token:', error);
-        // Handle the error, e.g., redirect to login or show a message
     }
 
     // Estados para el archivo, el ID del manicurista y la descripción
     const [file, setFile] = useState(null);
-    const [manicuristaId, setManicuristaId] = useState(userId); // El ID del manicurista se obtiene del token
+    const [manicuristaId, setManicuristaId] = useState(manicurist_id); // El ID del manicurista se obtiene del token
     const [descripcion, setDescripcion] = useState('');
 
     const handleSubmit = async (e) => {

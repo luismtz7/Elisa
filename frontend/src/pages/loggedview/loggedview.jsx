@@ -112,6 +112,7 @@ export const LoggedView = () => {
               {userName}
             </p>
 
+            {/*
             <article className="item">
               <Link
                 to="/perfil"
@@ -131,7 +132,7 @@ export const LoggedView = () => {
                 Configuración
               </Link>
             </article>
-
+            */}
             {
               userRole === 'manicurista' && (
                 <article className="item">

@@ -8,4 +8,6 @@ class Work(models.Model):
     fecha_subida = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Trabajo de {self.manicurista.usuario.username}"
+        if self.manicurista and self.manicurista.usuario:
+            return f"Trabajo de {self.manicurista.usuario.username}"
+        return "Trabajo sin asignar"
